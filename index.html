@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Gerador de Nota - Estação Verde</title>
+
+<style>
+body{
+    font-family: Arial;
+    background: linear-gradient(135deg,#e8f5e9,#c8e6c9);
+    padding:20px;
+}
+.container{
+    background:white;
+    padding:20px;
+    max-width:650px;
+    margin:auto;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.15);
+}
+.logo{
+    text-align:center;
+}
+.logo img{
+    width:120px;
+}
+h2{
+    text-align:center;
+    color:#2e7d32;
+    margin-bottom:5px;
+}
+.numero{
+    text-align:right;
+    font-weight:bold;
+    color:#555;
+}
+input{
+    width:100%;
+    margin:5px 0;
+    padding:8px;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+button{
+    background:#2e7d32;
+    color:white;
+    padding:10px;
+    border:none;
+    cursor:pointer;
+    margin-top:10px;
+    width:100%;
+    border-radius:5px;
+    font-weight:bold;
+}
+button:hover{
+    background:#1b5e20;
+}
+.lista{
+    margin-top:10px;
+}
+.total{
+    font-size:20px;
+    font-weight:bold;
+    margin-top:15px;
+    color:#1b5e20;
+}
+.footer{
+    text-align:center;
+    margin-top:20px;
+    font-size:14px;
+    color:#555;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="logo">
+    <!-- TROQUE "logo.png" PELO NOME DA SUA LOGO -->
+    <img src="logo.png" alt="Logo Estação Verde">
+</div>
+
+<h2>Estação Verde Viveiro</h2>
+
+<div class="numero">
+Nota Nº: <span id="numeroNota"></span>
+</div>
+
+<label>Data:</label>
+<input type="date" id="data">
+
+<label>Cliente:</label>
+<input type="text" id="cliente">
+
+<label>Produto:</label>
+<input type="text" id="produto">
+
+<label>Quantidade:</label>
+<input type="number" id="quantidade">
+
+<label>Valor Unitário:</label>
+<input type="number" id="valor">
+
+<button onclick="adicionar()">Adicionar Produto</button>
+
+<div class="lista" id="lista"></div>
+
+<div class="total">
+Total: R$ <span id="total">0.00</span>
+</div>
+
+<button onclick="window.print()">Imprimir / Salvar PDF</button>
+
+<div class="footer">
+Instagram: @estacao_verde_tere <br>
+WhatsApp: (62) 99246-5488
+</div>
+
+</div>
+
+<script>
+let total = 0;
+
+// GERA NÚMERO AUTOMÁTICO DA NOTA
+let numero = localStorage.getItem("numeroNota");
+
+if(!numero){
+    numero = 1;
+}else{
+    numero = parseInt(numero) + 1;
+}
+
+localStorage.setItem("numeroNota", numero);
+document.getElementById("numeroNota").innerText = numero;
+
+function adicionar(){
+    let produto = document.getElementById("produto").value;
+    let quantidade = document.getElementById("quantidade").value;
+    let valor = document.getElementById("valor").value;
+
+    if(produto == "" || quantidade == "" || valor == ""){
+        alert("Preencha todos os campos!");
+        return;
+    }
+
+    let subtotal = quantidade * valor;
+    total += subtotal;
+
+    document.getElementById("lista").innerHTML += 
+        produto + " - " + quantidade + "x R$ " + 
+        parseFloat(valor).toFixed(2) + 
+        " = R$ " + subtotal.toFixed(2) + "<br>";
+
+    document.getElementById("total").innerText = total.toFixed(2);
+
+    document.getElementById("produto").value="";
+    document.getElementById("quantidade").value="";
+    document.getElementById("valor").value="";
+}
+</script>
+
+</body>
+</html>
