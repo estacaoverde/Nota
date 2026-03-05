@@ -2,93 +2,89 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Gerador de Nota - Estação Verde</title>
+<title>Guia de Remessa - Estação Verde</title>
 
 <style>
 body{
-    font-family: Arial;
-    background: linear-gradient(135deg,#e8f5e9,#c8e6c9);
+    font-family: Arial, sans-serif;
+    background:#f0f0f0;
     padding:20px;
 }
 .container{
     background:white;
-    padding:20px;
-    max-width:650px;
+    padding:30px;
+    max-width:900px;
     margin:auto;
-    border-radius:15px;
-    box-shadow:0 0 15px rgba(0,0,0,0.15);
 }
-.logo{
-    text-align:center;
-    margin-bottom:10px;
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 .logo img{
-    width:150px;
+    width:130px;
+}
+.empresa-info{
+    text-align:right;
+    font-size:14px;
 }
 h2{
     text-align:center;
-    color:#2e7d32;
-    margin-bottom:5px;
+    margin:20px 0;
 }
-.numero{
-    text-align:right;
-    font-weight:bold;
-    color:#555;
+.info-top{
+    display:flex;
+    justify-content:space-between;
     margin-bottom:10px;
 }
-input{
+input, select{
     width:100%;
-    margin:5px 0;
-    padding:8px;
-    border-radius:5px;
-    border:1px solid #ccc;
+    padding:6px;
+    margin-top:5px;
 }
 button{
     background:#2e7d32;
     color:white;
     padding:10px;
     border:none;
-    cursor:pointer;
     margin-top:10px;
     width:100%;
-    border-radius:5px;
-    font-weight:bold;
-}
-button:hover{
-    background:#1b5e20;
+    cursor:pointer;
 }
 .tabela{
     width:100%;
     border-collapse: collapse;
-    margin-top:15px;
+    margin-top:20px;
 }
 .tabela th, .tabela td{
-    border:1px solid #ccc;
+    border:1px solid #000;
     padding:8px;
     text-align:center;
 }
-.tabela th{
-    background:#e8f5e9;
-}
 .total{
-    font-size:20px;
-    font-weight:bold;
-    margin-top:15px;
     text-align:right;
-    color:#1b5e20;
+    font-size:18px;
+    margin-top:15px;
+    font-weight:bold;
 }
-.footer{
+.assinaturas{
+    display:flex;
+    justify-content:space-between;
+    margin-top:70px;
+}
+.linha{
+    border-top:1px solid black;
+    width:250px;
+    margin-bottom:5px;
     text-align:center;
-    margin-top:20px;
-    font-size:14px;
-    color:#555;
 }
-@media print {
-    button{
+@media print{
+    button, input, select{
         display:none;
     }
     body{
         background:white;
+        padding:0;
     }
 }
 </style>
@@ -97,21 +93,41 @@ button:hover{
 
 <div class="container">
 
-<div class="logo">
-    <img src="logo.png" alt="Logo Estação Verde">
+<div class="header">
+    <div class="logo">
+        <img src="logo.png">
+    </div>
+    <div class="empresa-info">
+        <strong>Estação Verde Viveiro</strong><br>
+        Endereço: BR-153, 105<br>
+        Terezópolis de Goiás - GO<br>
+        CEP: 75175-000<br>
+        Telefone: (62) 99246-5488
+    </div>
 </div>
 
-<h2>Estação Verde Viveiro</h2>
+<h2>GUIA DE REMESSA / NOTA DE ENTREGA</h2>
 
-<div class="numero">
-Nota Nº: <span id="numeroNota"></span>
+<div class="info-top">
+    <div><strong>Nota Nº:</strong> <span id="numeroNota"></span></div>
+    <div><strong>Data:</strong> <span id="dataFinal"></span></div>
 </div>
 
+<div>
+<strong>Cliente:</strong> <span id="clienteFinal"></span>
+</div>
+
+<hr>
+
+<!-- CAMPOS DE PREENCHIMENTO -->
 <label>Data:</label>
 <input type="date" id="data">
 
 <label>Cliente:</label>
 <input type="text" id="cliente">
+
+<label>Código do Produto:</label>
+<input type="text" id="codigo">
 
 <label>Produto:</label>
 <input type="text" id="produto">
@@ -122,44 +138,63 @@ Nota Nº: <span id="numeroNota"></span>
 <label>Valor Unitário:</label>
 <input type="number" id="valor">
 
+<label>Forma de Pagamento:</label>
+<select id="pagamento">
+<option>Dinheiro</option>
+<option>Pix</option>
+<option>Cartão</option>
+<option>Boleto</option>
+</select>
+
 <button onclick="adicionar()">Adicionar Produto</button>
 
 <table class="tabela" id="tabela">
-    <tr>
-        <th>Descrição</th>
-        <th>Total (R$)</th>
-    </tr>
+<tr>
+<th>Código</th>
+<th>Descrição</th>
+<th>Total (R$)</th>
+</tr>
 </table>
 
 <div class="total">
 Total Geral: R$ <span id="total">0.00</span>
 </div>
 
-<button onclick="window.print()">Imprimir / Salvar PDF</button>
-
-<div class="footer">
-Instagram: @estacao_verde_tere <br>
-WhatsApp: (62) 99246-5488
+<div>
+<strong>Forma de Pagamento:</strong> <span id="pagamentoFinal"></span>
 </div>
+
+<div class="assinaturas">
+<div>
+<div class="linha"></div>
+Assinatura do Cliente
+</div>
+
+<div>
+<div class="linha"></div>
+Responsável pela Entrega
+</div>
+</div>
+
+<button onclick="finalizar()">Finalizar e Imprimir</button>
 
 </div>
 
 <script>
 let total = 0;
 
-// GERA NÚMERO AUTOMÁTICO DA NOTA
+// Número automático da nota
 let numero = localStorage.getItem("numeroNota");
-
 if(!numero){
     numero = 1;
 }else{
     numero = parseInt(numero) + 1;
 }
-
 localStorage.setItem("numeroNota", numero);
 document.getElementById("numeroNota").innerText = numero;
 
 function adicionar(){
+    let codigo = document.getElementById("codigo").value;
     let produto = document.getElementById("produto").value;
     let quantidade = document.getElementById("quantidade").value;
     let valor = document.getElementById("valor").value;
@@ -173,17 +208,31 @@ function adicionar(){
     total += subtotal;
 
     document.getElementById("tabela").innerHTML += `
-        <tr>
-            <td>${produto}</td>
-            <td>R$ ${subtotal.toFixed(2)}</td>
-        </tr>
+    <tr>
+        <td>${codigo}</td>
+        <td>${produto}</td>
+        <td>R$ ${subtotal.toFixed(2)}</td>
+    </tr>
     `;
 
     document.getElementById("total").innerText = total.toFixed(2);
 
+    document.getElementById("codigo").value="";
     document.getElementById("produto").value="";
     document.getElementById("quantidade").value="";
     document.getElementById("valor").value="";
+}
+
+function finalizar(){
+    let data = document.getElementById("data").value;
+    let cliente = document.getElementById("cliente").value;
+    let pagamento = document.getElementById("pagamento").value;
+
+    document.getElementById("dataFinal").innerText = data;
+    document.getElementById("clienteFinal").innerText = cliente;
+    document.getElementById("pagamentoFinal").innerText = pagamento;
+
+    window.print();
 }
 </script>
 
