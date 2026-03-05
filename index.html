@@ -20,9 +20,10 @@ body{
 }
 .logo{
     text-align:center;
+    margin-bottom:10px;
 }
 .logo img{
-    width:120px;
+    width:150px;
 }
 h2{
     text-align:center;
@@ -33,6 +34,7 @@ h2{
     text-align:right;
     font-weight:bold;
     color:#555;
+    margin-bottom:10px;
 }
 input{
     width:100%;
@@ -55,13 +57,24 @@ button{
 button:hover{
     background:#1b5e20;
 }
-.lista{
-    margin-top:10px;
+.tabela{
+    width:100%;
+    border-collapse: collapse;
+    margin-top:15px;
+}
+.tabela th, .tabela td{
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:center;
+}
+.tabela th{
+    background:#e8f5e9;
 }
 .total{
     font-size:20px;
     font-weight:bold;
     margin-top:15px;
+    text-align:right;
     color:#1b5e20;
 }
 .footer{
@@ -70,6 +83,14 @@ button:hover{
     font-size:14px;
     color:#555;
 }
+@media print {
+    button{
+        display:none;
+    }
+    body{
+        background:white;
+    }
+}
 </style>
 </head>
 <body>
@@ -77,7 +98,6 @@ button:hover{
 <div class="container">
 
 <div class="logo">
-    <!-- TROQUE "logo.png" PELO NOME DA SUA LOGO -->
     <img src="logo.png" alt="Logo Estação Verde">
 </div>
 
@@ -104,10 +124,15 @@ Nota Nº: <span id="numeroNota"></span>
 
 <button onclick="adicionar()">Adicionar Produto</button>
 
-<div class="lista" id="lista"></div>
+<table class="tabela" id="tabela">
+    <tr>
+        <th>Descrição</th>
+        <th>Total (R$)</th>
+    </tr>
+</table>
 
 <div class="total">
-Total: R$ <span id="total">0.00</span>
+Total Geral: R$ <span id="total">0.00</span>
 </div>
 
 <button onclick="window.print()">Imprimir / Salvar PDF</button>
@@ -147,10 +172,12 @@ function adicionar(){
     let subtotal = quantidade * valor;
     total += subtotal;
 
-    document.getElementById("lista").innerHTML += 
-        produto + " - " + quantidade + "x R$ " + 
-        parseFloat(valor).toFixed(2) + 
-        " = R$ " + subtotal.toFixed(2) + "<br>";
+    document.getElementById("tabela").innerHTML += `
+        <tr>
+            <td>${produto}</td>
+            <td>R$ ${subtotal.toFixed(2)}</td>
+        </tr>
+    `;
 
     document.getElementById("total").innerText = total.toFixed(2);
 
